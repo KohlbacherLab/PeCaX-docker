@@ -1,0 +1,142 @@
+version: "3.7"
+services:
+    pecax:
+        image: mirjamfi/pecax
+        container_name: pecax
+        restart: unless-stopped
+        ports:
+            - "3030:3030"
+        depends_on:
+            - biographvisart
+            - nextflow
+            - sbml4j
+            - arangodb
+    arangodb:
+        image: arangodb/arangodb
+        container_name: arangodb
+        restart: unless-stopped
+        environment:
+            ARANGO_NO_AUTH: 0
+        ports:
+            - "8529:8529"
+        volumes:
+            - arangodb_data_container:/var/lib/arangodb3
+            - arangodb_apps_data_container:/var/lib/arangodb3-apps 
+    biographvisart:
+        image: mirjamfi/biographvisart
+        container_name: biographvisart
+        restart: unless-stopped
+        ports:
+            - "3000:3000"
+    flask:
+        image: bilges/clinvap_api_flask
+        # build: ./flask
+        container_name: flask
+        restart: always
+        environment:
+            - APP_NAME=MyFlaskApp
+            - FLASK_ENV=development
+        expose:
+            - 8080
+        volumes:
+            - clinvap_uploads:/app/app/static/input/uploads
+            - clinvap_conf:/app/app/static/input/nf_conf
+            - clinvap_downloads:/app/app/static/output/downloads
+
+    nginx:
+        image: bilges/clinvap_api_nginx
+        # build: ./nginx
+        container_name: nginx
+        restart: always
+        ports:
+            - "80:80"
+
+    nextflow:
+        image: bilges/clinvap_api_nextflow:dev
+        # build: ./nextflow
+        container_name: nextflow
+        # command: GRCh37
+        volumes:
+            - ./work:/nextflow_pipeline/work
+            - clinvap_uploads:/nextflow_pipeline/uploads
+            - clinvap_downloads:/nextflow_pipeline/downloads
+            - clinvap_conf:/nextflow_pipeline/clinvap_conf
+        depends_on:
+            - flask
+            - nginx
+    db_setup:
+        image: alpine
+        volumes:
+            - sbml4jVolumeCompose:/db
+            - ./database_backups:/database_backups
+            - ./handover:/handover
+        command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/sbml4j_pecax_0.0.32.tar.gz --strip 1 && cd /handover && echo finished > db_backup"]
+    db_backup:
+        image: alpine
+        volumes:
+            - sbml4jVolumeCompose:/db
+            - ./database_backups:/database_backups
+        command: ["/bin/sh", "-c", "cd /database_backups && tar cfz sbml4j_pecax_0.0.32.tar.gz /db"]
+    apoc_install:
+        image: alpine
+        volumes:
+            - ./neo4j/plugins:/plugins
+        command: ["/bin/sh", "-c", "cd /plugins && wget https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.1.0.2/apoc-4.1.0.2-all.jar"]
+    sbml4jdatabase:
+        image: neo4j
+        volumes:
+            - sbml4jVolumeCompose:/var/lib/neo4j/data
+            - ./neo4j/plugins:/plugins
+            - ./neo4j/logs:/logs
+            - ./neo4j/conf:/var/lib/neo4j/conf
+        ports:
+            - "7474:7474"
+            - "7687:7687"
+        environment:
+            - NEO4J_dbms_security_auth__enabled=false
+            - NEO4J_dbms_memory_pagecache_size=1G
+            - NEO4J_dbms_memory_heap_initial__size=1G
+            - NEO4J_dbms_memory_heap_max__size=1G
+            - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+            - NEO4J_dbms_security_procedures_whitelist=apoc.*
+        restart: unless-stopped
+        command: ["neo4j"]
+    sbml4j:
+        image: thortiede/sbml4j:0.0.32
+        volumes:
+        - ./sbml4j/logs:/logs
+        environment:
+              - SPRING_PROFILES_ACTIVE=test
+              - SPRING_DATA_NEO4j_URI=bolt://sbml4jdatabase:7687
+              - SERVER_SERVLET_CONTEXTPATH=/sbml4j
+              - SERVER_PORT=8080
+              - OVERVIEWNETWORK_DEFAULT_BASE_NETWORK_U_U_I_D=83621fb1-48a0-4812-adb8-efbf362917d6
+              - OVERVIEWNETWORK_DEFAULT_MINSIZE=1
+              - OVERVIEWNETWORK_DEFAULT_MAXSIZE=2
+              - OVERVIEWNETWORK_DEFAULT_TERMINATEATDRUG=true
+              - OVERVIEWNETWORK_DEFAULT_DIRECTION=both
+              - SBML4J_OUTPUT_HIDE_MODEL_UUIDS=false
+              - SBML4J_NETWORK_HARD-DELETE=True
+              - SBML4J_NETWORK_USE-SHARED-PATHWAY-SEARCH=False
+              - SBML4J_ANNOTATION_APPEND=True
+              - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
+              - SBML4J_annotation_annotate-with-links=True
+              - SBML4J_externalresources_mdanderson_add-md-anderson-annotation=True
+              - SBML4J_externalresources_mdanderson_genelist=ABL1, AKT1, ALK, BRAF, CDK4, CDK6, CDKN2A, EGFR, ERBB2, FGFR1, FGFR2, FLT3, IDH1, KDR, KIT, KRAS, MDM2, MET, NRAS, NTRK1, NTRK2, PDGFRA, PIK3CA, PIK3R1, PTCH1, PTEN, PTPN11, PET, ROS1, SMO
+              - SBML4J_externalresources_mdanderson_baseurl=https://pct.mdanderson.org/home/
+              - SBML4J_externalresources_mdanderson_section=Overview
+              - SBML4J_externalresources_biologicalqualifer_default-database=KEGG
+              - SBML4J_externalresources_keggdatabase_pathway-link-prefix=https://www.genome.jp/kegg-bin/show_pathway?
+              - SBML4J_externalresources_keggdatabase_pathway-search-prefix=https://www.genome.jp/dbget-bin/www_bfind_sub?dbkey=pathway&keywords=
+        depends_on:
+            - "sbml4jdatabase"
+        ports:
+            - "8080:8080"
+        restart: unless-stopped
+volumes:
+    clinvap_uploads:
+    clinvap_downloads:
+    clinvap_conf:
+    sbml4jVolumeCompose:
+    arangodb_data_container:
+    arangodb_apps_data_container:
