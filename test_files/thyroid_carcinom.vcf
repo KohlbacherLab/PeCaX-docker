@@ -1,0 +1,5 @@
+##fileformat=VCFv4.1
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT
+7	140453136	.	A	T	.	PASS	CSQN=Missense;reference_codon=GTG;candidate_codons=GAG,GAA;candidate_mnv_variants=chr7:g.140453135_140453136delCAinsTT;aliases=ENSP00000288602;source=Ensembl	.
+1	11187096	.	A	G	.	PASS	CSQN=Missense;reference_codon=TTC;candidate_codons=CTT,CTG,CTA,CTC,TTA,TTG;candidate_snv_variants=chr1:g.11187094G>T,chr1:g.11187094G>C;candidate_mnv_variants=chr1:g.11187094_11187096delGAAinsAAG,chr1:g.11187094_11187096delGAAinsCAG,chr1:g.11187094_11187096delGAAinsTAG;aliases=ENSP00000354558;source=Ensembl	.
+16	2130300	.	C	T	.	PASS	CSQN=Nonsense;reference_codon=CAG;candidate_codons=TAA,TAG,TGA;candidate_mnv_variants=chr16:g.2130300_2130302delCAGinsTAA,chr16:g.2130300_2130302delCAGinsTGA;aliases=ENSP00000219476;source=Ensembl	.
