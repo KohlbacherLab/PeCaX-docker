@@ -1,5 +1,8 @@
 # PeCaX
-## First run:
+## Initial start:
+Download the repository. Then in the terminal:
+
+	cd PeCaX-docker-dev
 
     docker-compose up db_setup
   
@@ -7,16 +10,24 @@
   
     docker-compose up pecax
 
-## Next time:
+Open localhost:3030 in browser of your choice.
+
+## Starting it the next time:
 
     docker-compose up pecax
   
-## Exit:
+Open localhost:3030 in browser of your choice.
+
+## Exiting the application:
+In the open terminal:
 
     Ctrl+c
   
     docker-compose down
+    
+Close the browser window to clear all data.
   
-  ### If you want to store the network database:
+### Storing the network database:
+The network database is not stored automatically. To store it, execute in the open terminal:
   
     docker-compose up db_backup 
