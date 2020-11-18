@@ -1,6 +1,6 @@
 # PeCaX
 ## Initial start:
-Download the repository. Then in the terminal:
+You need to have [Docker](https://www.docker.com/get-started) installed. Download the repository. Then in the terminal:
 
 	cd PeCaX-docker-dev
 
