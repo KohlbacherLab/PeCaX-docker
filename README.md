@@ -7,11 +7,11 @@ Requirements: [Docker](https://www.docker.com/get-started) Engine release 1.13.0
 
 Please make sure that you have 34 GB of physical empty space on your Docker Disk Image, and ports 3030, 3000, 8529, 7474, 7687, 8080 are not being used by another application.
 
-To tun the pipeline, please follow the steps given below.
+To run the pipeline, please follow the steps given below.
 
-	git clone https://github.com/KohlbacherLab/PeCaX-docker.git
+	git clone https://github.com/MirjamFi/PeCaX.git
 	
-	cd PeCaX-docker
+	cd PeCaX-master
 
     docker-compose up db_setup
   
@@ -36,3 +36,6 @@ To tun the pipeline, please follow the steps given below.
 ### In Browser of your choice open localhost:3030
 
 ### We recommend using full screen to enjoy the full experience.
+
+## Demo data
+We provided some data for demonstration purpose in the folder test_files. The .vcf-files contain the mandatory SNV information. The .tsv-files contain optional CNV information.
