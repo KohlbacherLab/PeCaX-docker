@@ -29,7 +29,7 @@ To tun the pipeline, please follow the steps given below.
   
     docker-compose down
   
-### Storing the network database::
+### Storing the network database:
   
     docker-compose up db_backup 
     
