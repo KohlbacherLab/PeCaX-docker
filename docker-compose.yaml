@@ -21,7 +21,7 @@ services:
             - "8529:8529"
         volumes:
             - arangodb_data_container:/var/lib/arangodb3
-            - arangodb_apps_data_container:/var/lib/arangodb3-apps 
+            - arangodb_apps_data_container:/var/lib/arangodb3-apps
     biographvisart:
         image: mirjamfi/biographvisart
         container_name: biographvisart
@@ -52,7 +52,7 @@ services:
             - "80:80"
 
     nextflow:
-        image: bilges/clinvap_api_nextflow:dev
+        image: bilges/clinvap_api_nextflow
         # build: ./nextflow
         container_name: nextflow
         # command: GRCh37
@@ -67,14 +67,13 @@ services:
     db_setup:
         image: alpine
         volumes:
-            - sbml4jVolumeCompose:/db
+            - sbml4j_network_db:/db
             - ./database_backups:/database_backups
-            - ./handover:/handover
-        command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/sbml4j_pecax_0.0.32.tar.gz --strip 1 && cd /handover && echo finished > db_backup"]
+        command: ["/bin/sh", "-c", "cd /db && tar xfz /database_backups/sbml4j_pecax_0.0.32.tar.gz --strip 1"] 
     db_backup:
         image: alpine
         volumes:
-            - sbml4jVolumeCompose:/db
+            - sbml4j_network_db:/db
             - ./database_backups:/database_backups
         command: ["/bin/sh", "-c", "cd /database_backups && tar cfz sbml4j_pecax_0.0.32.tar.gz /db"]
     apoc_install:
@@ -84,8 +83,9 @@ services:
         command: ["/bin/sh", "-c", "cd /plugins && wget https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.1.0.2/apoc-4.1.0.2-all.jar"]
     sbml4jdatabase:
         image: neo4j
+        container_name: sbml4jdb
         volumes:
-            - sbml4jVolumeCompose:/var/lib/neo4j/data
+            - sbml4j_network_db:/var/lib/neo4j/data
             - ./neo4j/plugins:/plugins
             - ./neo4j/logs:/logs
             - ./neo4j/conf:/var/lib/neo4j/conf
@@ -95,27 +95,28 @@ services:
         environment:
             - NEO4J_dbms_security_auth__enabled=false
             - NEO4J_dbms_memory_pagecache_size=1G
-            - NEO4J_dbms_memory_heap_initial__size=1G
-            - NEO4J_dbms_memory_heap_max__size=1G
+            - NEO4J_dbms_memory_heap_initial__size=2G
+            - NEO4J_dbms_memory_heap_max__size=2G
             - NEO4J_dbms_security_procedures_unrestricted=apoc.*
             - NEO4J_dbms_security_procedures_whitelist=apoc.*
         restart: unless-stopped
         command: ["neo4j"]
     sbml4j:
-        image: thortiede/sbml4j:0.1
+        image: thortiede/sbml4j:latest
+        container_name: sbml4j
         volumes:
         - ./sbml4j/logs:/logs
         environment:
               - SPRING_PROFILES_ACTIVE=test
-              - SPRING_DATA_NEO4j_URI=bolt://sbml4jdatabase:7687
+              - SPRING_DATA_NEO4j_URI=bolt://sbml4jdb:7687
               - SERVER_SERVLET_CONTEXTPATH=/sbml4j
               - SERVER_PORT=8080
               - OVERVIEWNETWORK_DEFAULT_BASE_NETWORK_U_U_I_D=83621fb1-48a0-4812-adb8-efbf362917d6
               - OVERVIEWNETWORK_DEFAULT_MINSIZE=1
-              - OVERVIEWNETWORK_DEFAULT_MAXSIZE=1
-              - OVERVIEWNETWORK_DEFAULT_TERMINATEATDRUG=true
+              - OVERVIEWNETWORK_DEFAULT_MAXSIZE=2
+              - OVERVIEWNETWORK_DEFAULT_TERMINATEATDRUG=True
               - OVERVIEWNETWORK_DEFAULT_DIRECTION=both
-              - SBML4J_OUTPUT_HIDE_MODEL_UUIDS=false
+              - SBML4J_OUTPUT_HIDE_MODEL_UUIDS=False
               - SBML4J_NETWORK_HARD-DELETE=True
               - SBML4J_NETWORK_USE-SHARED-PATHWAY-SEARCH=False
               - SBML4J_ANNOTATION_APPEND=True
@@ -137,6 +138,6 @@ volumes:
     clinvap_uploads:
     clinvap_downloads:
     clinvap_conf:
-    sbml4jVolumeCompose:
+    sbml4j_network_db:
     arangodb_data_container:
     arangodb_apps_data_container:
