@@ -10,6 +10,8 @@ Please make sure that you have 34 GB of physical empty space on your Docker Disk
 To tun the pipeline, please follow the steps given below.
 
 	git clone https://github.com/KohlbacherLab/PeCaX-docker.git
+	
+	cd PeCaX-docker
 
     docker-compose up db_setup
   
