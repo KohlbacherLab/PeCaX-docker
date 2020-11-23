@@ -40,6 +40,8 @@ PeCaX uses several volumes to store data and work files. They are briefly descri
 - The local folders: ./neo4j/logs, ./neo4j/conf, ./neo4j/plugins are mapped into the sbml4jdb container
 - The local folder ./sbml4j/logs is mapped into the sbml4j container
 - The local folder ./database_backups is mapped into the temporary containers "db_setup" and "db_backup" to facilitate database creation form a tar.gz and database backup to the tar.gz respectively
+- arangodb_data_container: database directory to store the collection data (username, jobid, json, network uuids)
+- arangodb_apps_data_container: apps directory to store any extensions
 
 ## Create a network database backup
 
