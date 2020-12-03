@@ -98,7 +98,7 @@ services:
             - NEO4J_dbms_memory_heap_initial__size=2G
             - NEO4J_dbms_memory_heap_max__size=2G
             - NEO4J_dbms_security_procedures_unrestricted=apoc.algo.dijkstraWithDefaultWeight, apoc.path.expand                  
-            - NEO4J_dbms_security_procedures_allowlist=apoc.algo.dijkstraWithDefaultWeight, apoc.path.expand
+            - NEO4J_dbms_security_procedures_whitelist=apoc.algo.dijkstraWithDefaultWeight, apoc.path.expand
         restart: unless-stopped
         command: ["neo4j"]
     sbml4j:
