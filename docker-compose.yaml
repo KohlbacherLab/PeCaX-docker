@@ -52,7 +52,7 @@ services:
             - "80:80"
 
     nextflow:
-        image: bilges/clinvap_api_nextflow
+        image: bilges/clinvap_api_nextflow:dev
         # build: ./nextflow
         container_name: nextflow
         # command: GRCh37
