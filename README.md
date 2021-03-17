@@ -20,7 +20,7 @@ To run the pipeline for the first time, please follow the steps given below.
 
     If your analysis requires GRCh38, use: 
     
-    `docker-compose up vep_files_GRCh37`
+    `docker-compose up vep_files_GRCh38`
 
 3. Start PeCaX services via
 
