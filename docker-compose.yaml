@@ -28,6 +28,19 @@ services:
         restart: unless-stopped
         ports:
             - "3000:3000"
+    
+    vep_files_GRCh37:
+      image: bilges/clinvap_file_deploy:vP_GRCh37
+      container_name: vep_files_GRCh37
+      volumes: 
+        - clinvap_downloads:/mnt
+    
+    vep_files_GRCh38:
+      image: bilges/clinvap_file_deploy:vP_GRCh38
+      container_name: vep_files_GRCh38
+      volumes: 
+        - clinvap_downloads:/mnt
+
     flask:
         image: bilges/clinvap_api_flask
         # build: ./flask
