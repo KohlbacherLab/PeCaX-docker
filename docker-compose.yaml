@@ -70,7 +70,6 @@ services:
         container_name: nextflow
         # command: GRCh37
         volumes:
-            - ./work:/nextflow_pipeline/work
             - clinvap_uploads:/nextflow_pipeline/uploads
             - clinvap_downloads:/nextflow_pipeline/downloads
             - clinvap_conf:/nextflow_pipeline/clinvap_conf
