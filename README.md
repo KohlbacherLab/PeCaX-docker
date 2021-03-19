@@ -6,7 +6,7 @@ Please refer this document for implementation of the application. Documentation 
 ## Usage with Docker
 Requirements: Docker Engine release 1.13.0+, Compose release 1.10.0+.
 
-Please make sure that you have 34 GB of physical empty space on your Docker Disk Image, and ports 3030, 3000, 8529, 7474, 7687, 8080 are not being used by another application.
+Please make sure that you have 55 GB of physical empty space on your Docker Disk Image, and ports 3030, 3000, 8529, 7474, 7687, 8080 are not being used by another application.
 
 To run the pipeline for the first time, please follow the steps given below.
 
@@ -15,12 +15,20 @@ To run the pipeline for the first time, please follow the steps given below.
     `git clone https://github.com/MirjamFi/PeCaX.git`
 
 2. For human genome assembly GRCh37, use: 
-
+3. 
     `docker-compose up vep_files_GRCh37`
-
-    If your analysis requires GRCh38, use: 
     
+   To free up space, remove the downloaded image:
+   
+   	`docker rmi bilges/clinvap_file_deploy:vP_GRCh37`
+
+   If your analysis requires GRCh38, use: 
+   
     `docker-compose up vep_files_GRCh38`
+    
+  To free up space, remove the downloaded image:
+  
+   	`docker rmi bilges/clinvap_file_deploy:vP_GRCh38`
 
 3. Start PeCaX services via
 
