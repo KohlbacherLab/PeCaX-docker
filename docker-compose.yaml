@@ -1,7 +1,7 @@
 version: "3.7"
 services:
     pecax:
-        image: mirjamfi/pecax
+        image: pecax/pecax
         container_name: pecax
         restart: unless-stopped
         ports:
@@ -17,13 +17,13 @@ services:
         restart: unless-stopped
         environment:
             ARANGO_NO_AUTH: 0
-        ports:
-            - "8529:8529"
+        expose:
+            - "8529"
         volumes:
             - arangodb_data_container:/var/lib/arangodb3
             - arangodb_apps_data_container:/var/lib/arangodb3-apps
     biographvisart:
-        image: mirjamfi/biographvisart
+        image: pecax/biographvisart
         container_name: biographvisart
         restart: unless-stopped
         ports:
@@ -61,8 +61,8 @@ services:
         # build: ./nginx
         container_name: nginx
         restart: always
-        ports:
-            - "80:80"
+        expose:
+            - "80"
 
     nextflow:
         image: bilges/clinvap_api_nextflow
@@ -116,7 +116,7 @@ services:
         command: ["neo4j"]
  
     sbml4j:
-        image: thortiede/sbml4j:latest
+        image: pecax/sbml4j:latest
         container_name: sbml4j
         volumes:
             - sbml4j_logs:/logs
