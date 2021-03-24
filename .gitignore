@@ -3,7 +3,5 @@ node_modules
 .nuxt
 handover
 sbml4j
-neo4j
 nginx
 flask
-work
