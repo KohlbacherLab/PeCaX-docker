@@ -76,26 +76,7 @@ services:
         depends_on:
             - flask
             - nginx
-    sbml4j_db_setup:
-        image: alpine
-        volumes:
-            - sbml4j_neo4j_vol:/vol
-            - ./neo4j_backups:/neo4j_backups
-        command: ["/bin/sh", "-c", "cd /vol && tar xfz /neo4j_backups/pecax.tar.gz --strip 1 && cd .. && chown -R 7474:7474 vol && chmod 600 /vol/conf/neo4j.conf"]
-     
-    sbml4j_db_backup:
-        image: alpine
-        volumes:
-            - ./neo4j:/neo4j
-            - ./neo4j_backups:/neo4j_backups
-        command: ["/bin/sh", "-c", "cd /neo4j_backups && tar cfz pecax.tar.gz /neo4j"]
-      
-    apoc_install:
-        image: alpine
-        volumes:
-            - ./neo4j/plugins:/plugins
-        command: ["/bin/sh", "-c", "cd /plugins && wget https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/4.1.0.2/apoc-4.1.0.2-all.jar"]
-    
+
     sbml4jdatabase:
         image: neo4j:4.1
         container_name: sbml4jdb
@@ -119,16 +100,16 @@ services:
         image: pecax/sbml4j:latest
         container_name: sbml4j
         volumes:
-            - sbml4j_logs:/logs
+            - sbml4j_service_vol:/logs
         environment:
             - SPRING_PROFILES_ACTIVE=test
             - SPRING_DATA_NEO4j_URI=bolt://sbml4jdb:7687
             - SERVER_SERVLET_CONTEXTPATH=/sbml4j
             - SERVER_PORT=8080
-            - OVERVIEWNETWORK_DEFAULT_BASE_NETWORK_U_U_I_D=b15f1749-4947-4c2f-92ed-cb5993a6631b
+            - OVERVIEWNETWORK_DEFAULT_BASE-NETWORK-NAME=PeCaX-Base
             - OVERVIEWNETWORK_DEFAULT_MINSIZE=1
             - OVERVIEWNETWORK_DEFAULT_MAXSIZE=2
-            - OVERVIEWNETWORK_DEFAULT_TERMINATEATDRUG=True
+            - OVERVIEWNETWORK_DEFAULT_TERMINATEAT=Drugtarget
             - OVERVIEWNETWORK_DEFAULT_DIRECTION=both
             - sbml4j.context.minSize=1
             - sbml4j.context.maxSize=3
@@ -136,20 +117,26 @@ services:
             - sbml4j.context.direction=both
             - SBML4J_OUTPUT_HIDE_MODEL_U-U-I-DS=False
             - SBML4J_NETWORK_HARD-DELETE=True
-            - SBML4j_FORCE-DELETE-OF-PUBLIC-NETWORK=False
+            - SBML4J_NETWORK_FORCE-DELETE-OF-PUBLIC-NETWORK=False
+            - SBML4J_NETWORK_DELETE-EXISTING=True
+            - SBML4J_NETWORK_DELETE-DERIVED=True
             - SBML4J_NETWORK_USE-SHARED-PATHWAY-SEARCH=False
-            - sbml4j.network.public-user=sbml4j
-            - sbml4j.network.show-inactive-networks=false
-            - sbml4j.network.allow-inactive-duplicates=true
+            - SBML4J_NETWORK_PUBLIC-USER=sbml4j
+            - SBML4J_NETWORK_SHOW-INACTIVE-NETWORKS=false
+            - SBML4J_NETWORK_ALLOW-INACTIVE-DUPLICATES=true
             - SBML4J_ANNOTATION_APPEND=True
             - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
-            - SBML4J_annotation_annotate-with-links=True
+            - SBML4J_ANNOTATION_ANNOTATE-WITH-LINKS=True
             - sbml4j.csv.matching-column-name[0]=gene name
             - sbml4j.csv.matching-column-name[1]=genename
-            - sbml4j.csv.matching-column-name[2]=gene symbol
-            - sbml4j.csv.matching-column-name[3]=genesymbol
-            - sbml4j.csv.matching-column-name[4]=gene
-            - sbml4j.csv.matching-column-name[5]=symbol 
+            - sbml4j.csv.matching-column-name[2]=gene.name
+            - sbml4j.csv.matching-column-name[3]=gene_name
+            - sbml4j.csv.matching-column-name[4]=gene symbol
+            - sbml4j.csv.matching-column-name[5]=genesymbol
+            - sbml4j.csv.matching-column-name[6]=gene.symbol
+            - sbml4j.csv.matching-column-name[7]=gene_symbol
+            - sbml4j.csv.matching-column-name[8]=gene
+            - sbml4j.csv.matching-column-name[9]=symbol 
             - SBML4J_externalresources_mdanderson_add-md-anderson-annotation=True
             - SBML4J_externalresources_mdanderson_genelist=ABL1, AKT1, ALK, BRAF, CDK4, CDK6, CDKN2A, EGFR, ERBB2, FGFR1, FGFR2, FLT3, IDH1, KDR, KIT, KRAS, MDM2, MET, NRAS, NTRK1, NTRK2, PDGFRA, PIK3CA, PIK3R1, PTCH1, PTEN, PTPN11, PET, ROS1, SMO
             - SBML4J_externalresources_mdanderson_baseurl=https://pct.mdanderson.org/home/
@@ -159,14 +146,14 @@ services:
             - SBML4J_externalresources_keggdatabase_pathway-search-prefix=https://www.genome.jp/dbget-bin/www_bfind_sub?dbkey=pathway&keywords=
         depends_on:
             - "sbml4jdatabase"
-        expose:
-            - "8080"
+        ports:
+            - "8080:8080"
         restart: on-failure
 volumes:
     clinvap_uploads:
     clinvap_downloads:
     clinvap_conf:
-    sbml4j_logs:
+    sbml4j_service_vol:
     sbml4j_neo4j_vol:
     arangodb_data_container:
     arangodb_apps_data_container:
