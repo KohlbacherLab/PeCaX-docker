@@ -28,7 +28,7 @@ To run the pipeline for the first time, please follow the steps given below.
     
   To free up space, remove the downloaded image:
   
-   	`docker rmi bilges/clinvap_file_deploy:vP_GRCh38`
+    `docker rmi bilges/clinvap_file_deploy:vP_GRCh38`
    	
   The assemblies can be served in parallel and need to be downloaded only once as long as the volume `pecax-docker_clinvap_downloads` is not removed.
 
