@@ -37,7 +37,7 @@ To run the pipeline for the first time, please follow the steps given below.
 	`docker-compose up pecax`
 
    
-####(3. Make sure to create a network database as described below before starting PeCaX for the first time.)
+	Make sure to create a network database as described below before starting PeCaX for the first time.
 4.  In Browser of your choice open localhost:3030
 
 	 We recommend using full screen to enjoy the full experience.
