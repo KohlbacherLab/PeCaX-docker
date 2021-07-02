@@ -97,7 +97,7 @@ services:
         command: ["neo4j"]
  
     sbml4j:
-        image: pecax/sbml4j:latest
+        image: pecax/sbml4j:1.0
         container_name: sbml4j
         volumes:
             - sbml4j_service_vol:/logs
@@ -122,8 +122,8 @@ services:
             - SBML4J_NETWORK_DELETE-DERIVED=True
             - SBML4J_NETWORK_USE-SHARED-PATHWAY-SEARCH=False
             - SBML4J_NETWORK_PUBLIC-USER=sbml4j
-            - SBML4J_NETWORK_SHOW-INACTIVE-NETWORKS=false
-            - SBML4J_NETWORK_ALLOW-INACTIVE-DUPLICATES=true
+            - SBML4J_NETWORK_SHOW-INACTIVE-NETWORKS=False
+            - SBML4J_NETWORK_ALLOW-INACTIVE-DUPLICATES=True
             - SBML4J_ANNOTATION_APPEND=True
             - SBML4J_ANNOTATION_KEGGGENESSEPARATOR=+
             - SBML4J_ANNOTATION_ANNOTATE-WITH-LINKS=True
