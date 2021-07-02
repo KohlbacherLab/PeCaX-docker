@@ -298,7 +298,7 @@ The UUID of the pathway is part of the URL as can be seen here:
 ```bash
 curl -v \
      -d "mappingType"="PATHWAYMAPPING" \
-     -d "networkName"="PWM-KEGG-BMC" \
+     -d "networkname"="PWM-KEGG-BMC" \
      -o response.mapping \
    http://localhost:8080/sbml4j/mapping/b6da7dc5-4dc4-4991-85c0-5ab75e2bf929
 ```
@@ -381,7 +381,7 @@ The endpoint expects a 'type' parameter, giving a character string describing th
 
 Please note, that since there can be multiple Drugs targeting the same gene or gene-product, the annotation-names will include a numbering scheme in addition to the column names given in the csv file.
 
-Make sure to set the 'networkName' to "PeCaX-Base" (case-sensitive).
+Make sure to set the 'networkname' to "PeCaX-Base" (case-sensitive).
 SBML4j for PeCaX is configured to use the network with this name as basis for calculating the networks by default.
 If you want to use a different name, make sure to also change the appropriate config parameter in the 'docker-compose.yaml' file.
 
@@ -390,7 +390,7 @@ You can use the curl command to upload a csv file and annotate the created netwo
 curl -v \
      -F upload=@all_hsa_cleaned.csv \
      -F "type"="Drugtarget" \
-     -F "networkName"="PeCaX-Base" \
+     -F "networkname"="PeCaX-Base" \
      -o response.drugbank \
    http://localhost:8080/sbml4j/networks/a68645cb-f3bb-49d3-b05f-7f6f05debba3/csv
 ```
@@ -401,7 +401,7 @@ The python package also offers this functionality:
 ```python
 net = client.getNetworkByName("PWM-KEGG-BMC")
 net.addCsvData("all_hsa_cleaned.csv", "Drugtarget", 
-               networkName="PeCaX-Base")
+               networkname="PeCaX-Base")
 ```
 
 Now your installation of PeCaX should contain the same base network-database that can be found in the demo-version at 
