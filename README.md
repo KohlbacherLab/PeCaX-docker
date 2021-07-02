@@ -303,9 +303,8 @@ curl -v \
    http://localhost:8080/sbml4j/mapping/b6da7dc5-4dc4-4991-85c0-5ab75e2bf929
 ```
 
-TODO: Does this work with getting the uuid from the response in python? 
 ```python
-resp = client.mapPathway(collUUID, "PPI", "PWM-KEGG_BMC")
+resp = client.mapPathway(collUUID, "PATHWAYMAPPING", "PWM-KEGG_BMC")
 print("The created mapping has the uuid: {}".format(resp.get("uuid")))
 ```
 
