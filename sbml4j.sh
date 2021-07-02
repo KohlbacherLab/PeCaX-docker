@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Default volume name should be prefixed with sbml4j-compose
+# Default volume name should be prefixed with folder name
 default_volume_prefix="$(echo ${PWD##*/} | tr '[A-Z]' '[a-z]')"
 
 function show_usage() {
