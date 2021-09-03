@@ -319,7 +319,7 @@ Such a network mapping has been used for PeCaX to allow for the most broad view 
 You can find the drugtarget information used in PeCaX at: https://go.drugbank.com/releases/latest#protein-identifiers
 You will need a free account on drugbank.ca to gain access to this file, which is released under the 'Creative Common’s Attribution-NonCommercial 4.0 International License.'
 You will have to agree to these terms and conditions to continue with the next steps described here.
-We used the 'Drug target identifiers' file for all drug groups to get a broad view on available and possible drugs and the genes and geneproducts they target.
+We used the 'Drug target identifiers' file for all approved drug groups to get a broad view on available and possible drugs and the genes and geneproducts they target.
 This was combined with the DrugBank Vocabulary to map the DrugBankID of drugs to their name, availavle at: https://go.drugbank.com/releases/latest#open-data
 In order to reproduce the results found in the publication two preprocessing steps need to be performed:
   1. Filter out all rows that are not targeting genes in Humans (column 'Species').
