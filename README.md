@@ -320,58 +320,69 @@ You can find the drugtarget information used in PeCaX at: https://go.drugbank.co
 You will need a free account on drugbank.ca to gain access to this file, which is released under the 'Creative Common’s Attribution-NonCommercial 4.0 International License.'
 You will have to agree to these terms and conditions to continue with the next steps described here.
 We used the 'Drug target identifiers' file for all drug groups to get a broad view on available and possible drugs and the genes and geneproducts they target.
+This was combined with the DrugBank Vocabulary to map the DrugBankID of drugs to their name, availavle at: https://go.drugbank.com/releases/latest#open-data
 In order to reproduce the results found in the publication two preprocessing steps need to be performed:
   1. Filter out all rows that are not targeting genes in Humans (column 'Species').
   2. Consolidate rows with the same 'ID' into one row, combining the elements in the 'Drug IDs' of all those rows into one.
+  3. Combine it with the DrugBank Vocabulary
 
 Here we provide an exemplary R script to perform Step 2 above:
 
 ```R
-csv <- read.csv("all.csv", header=TRUE, stringsAsFactors = FALSE)
-csv <- csv[order(csv$Name),]
+# create a csv containing one entry per drug targeting a human gene
 
-newcsv <- csv[0,]
+# load genes with associated drugs
+genes <- read.csv("all.csv", header=TRUE, stringsAsFactors = FALSE)
+genes <- genes[order(genes$Name),]
+
+# load dictionary for drugbank id and drug name
+drugbank_vocabulary <- read.csv("drugbank_vocabulary.csv", header=TRUE, stringsAsFactors = FALSE)
+
+# create new dataframe
+filtered_genes <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(filtered_genes) <- c("Gene.Name", "Drug.IDs")
 
 i <- 1
 j <- 2
 
-drugids <- csv[i,"Drug.IDs"]
+drugids <- genes[i,"Drug.IDs"]
 
-while(j<=nrow(csv) && i <= (nrow(csv)-1)) {
-  gene1 <- csv[i,"Name"]
-  gene2 <- csv[j,"Name"]
-  species1 <- csv[i,"Species"]
-  species2 <- csv[j,"Species"]
-  if(gene1 == gene2 && 
-     (is.na(csv[i,"Species"])||is.na(csv[j,"Species"]) || species1 == species2)){
-
-    drugids <- paste(drugids, as.character(csv[j,"Drug.IDs"]),sep=";")
-
+# filter for human genes and only have one entry per gene
+while(j<=nrow(genes) && i <= (nrow(genes)-1)) {
+  gene1 <- genes[i,"Gene.Name"]
+  gene2 <- genes[j,"Gene.Name"]
+  species1 <- genes[i,"Species"]
+  species2 <- genes[j,"Species"]
+  if( gene1 == gene2 && species1 == "Humans" && species2 == "Humans"){
+    drugids <- paste(drugids, as.character(genes[j,"Drug.IDs"]),sep=";")
     j <- j+1
   }
   else{
-    newcsv[nrow(newcsv) + 1,] = list(csv[i,"ID"],
-                                     csv[i,"Name"],
-                                     csv[i,"Gene.Name"],
-                                     csv[i,"GenBank.Protein.ID"],
-                                     csv[i,"GenBank.Gene.ID"],
-                                     csv[i, "UniProt.ID"],
-                                     csv[i, "Uniprot.Title"],
-                                     csv[i, "PDB.ID"],
-                                     csv[i, "GeneCard.ID"],
-                                     csv[i, "GenAtlas.ID"],
-                                     csv[i, "HGNC.ID"],
-                                     csv[i,"Species"],
-                                     drugids)
+    if(species1 == "Humans" && (is.na(genes[i,"Gene.Name"]) | nchar(genes[i,"Gene.Name"]) > 0)){ 
+      filtered_genes[nrow(filtered_genes) + 1,] = list(genes[i,"Gene.Name"],drugids)
+    }  
     i <- j
     j <- j+1
     
-    drugids <- csv[i,"Drug.IDs"]
+    drugids <- genes[i,"Drug.IDs"]
   }
 }
-    
 
-write.csv(newcsv,"all_hsa_cleaned.csv", row.names = FALSE)
+# merge drug common names and drug infos with associated genes
+drugcsv <- data.frame(matrix(ncol = 8, nrow = 0))
+colnames(drugcsv) <- c(colnames(drugbank_vocabulary), "Gene.Name")
+for(row in 1:nrow(filtered_genes)){
+  gene <- filtered_genes[row, "Gene.Name"] 
+  drugids <- unlist(strsplit(filtered_genes[row, "Drug.IDs"], ";"))
+  for(drug in drugids){
+    drug <- gsub("\\s", "", drug)  
+    drugcsv[nrow(drugcsv) + 1,] = c(drugbank_vocabulary[drugbank_vocabulary$DrugBank.ID==drug,],gene)
+  }
+}
+
+# save new csv     
+write.csv(drugcsv,"drug_genes_approved.csv", row.names = FALSE)
+
 ```
 
 ### 9. Add the Drugbank csv file to the network mappings
@@ -387,7 +398,7 @@ If you want to use a different name, make sure to also change the appropriate co
 You can use the curl command to upload a csv file and annotate the created network mapping with the contained data:
 ```bash
 curl -v \
-     -F upload=@all_hsa_cleaned.csv \
+     -F upload=@drug_genes_approved.csv \
      -F "type"="Drugtarget" \
      -F "networkname"="PeCaX-Base" \
      -o response.drugbank \
@@ -399,7 +410,7 @@ The uuid in the url (here a68645cb-f3bb-49d3-b05f-7f6f05debba3 as example) is th
 The python package also offers this functionality:
 ```python
 net = client.getNetworkByName("PWM-KEGG-BMC")
-net.addCsvData("all_hsa_cleaned.csv", "Drugtarget", 
+net.addCsvData("drug_genes_approved.csv", "Drugtarget", 
                networkname="PeCaX-Base")
 ```
 
