@@ -1,7 +1,7 @@
 # PeCaX
 Personalized Cancer and Network Explorer (PeCaX) is a tool for identifying patient specific cancer mechanisms by providing a complete mutational profile from variants to networks. It employs ClinVAP to perform clinical variant annotation which focuses on processing, filtering and prioritization of the variants to find the disrupted genes that are involved in carcinogenesis and to identify actionable variants from the mutational landscape of a patient. In addition it creates networks showing the connections between the driver genes and the genes in their neighbourhood and automatically performs pathway enrichment analysis using pathway resources (SBML4j). Its interactive visualisation (BioGraphVisart) supports easy network exploration and patient similarity (node overlap) and a merged network graph of two patient-specific networks can be calculated.
 
-Please refer this document for implementation of the application. Documentation of the pipeline is available at [Wiki page](https://github.com/KohlbacherLab/PeCaX-docker/wiki).
+Please refer this document for implementation of the application. Documentation of the pipeline is available at [Wiki page](https://github.com/KohlbacherLab/PeCaX-docker/wiki). We provide a short video [here](https://github.com/KohlbacherLab/PeCaX-docker/blob/main/PeCaX-demonstration.mp4).
 
 ## Usage with Docker
 Requirements: Docker Engine release 1.13.0+, Compose release 1.10.0+.
